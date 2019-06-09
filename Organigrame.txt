@@ -1,0 +1,6 @@
+Page d'accueil
+Page d'authentification
+Page d'inscription
+Page liste des produits
+Page liste des achats
+Page Historique des achats
