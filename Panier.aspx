@@ -2,12 +2,13 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-<h1>Panier</h1>
+    <h1>Panier</h1>
 <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
         ConnectionString="<%$ ConnectionStrings:ApplicationServices %>" 
-        DeleteCommand="DELETE FROM Commander WHERE ([UserName] = @UserName) and (IDProduit = @IDProduit)" 
+        DeleteCommand="DELETE FROM Commander WHERE (UserName = @UserName) AND (IDProduit = @IDProduit)" 
         SelectCommand="SELECT [Produit].[Nom]  As 'Nom_produit',[UserName], [Commander].[IDProduit], [Qte],  (Qte * Prix) as 'Sous-total' FROM [Commander]  INNER JOIN Produit ON [Commander].[IDProduit] = [Produit].[IDProduit] WHERE ([UserName] = @UserName)" 
-        UpdateCommand="UPDATE Commander SET  [Qte] = @Qte   WHERE ([UserName] = @UserName) and (IDProduit = @IDProduit)">
+        
+        UpdateCommand="UPDATE Commander SET  [Qte] = @Qte   WHERE (UserName = @UserName) and (IDProduit = @IDProduit)">
         <DeleteParameters>
             <asp:Parameter Name="IDProduit" />
         </DeleteParameters>
@@ -20,22 +21,25 @@
     </asp:SqlDataSource>
     <asp:GridView ID="GridView1"  runat="server" DataSourceID="SqlDataSource1" 
      ShowFooter="True" onrowupdating="GridView1_RowUpdating" 
-        AutoGenerateColumns="False" ondatabound="GridView1_DataBound" 
-        onrowdeleted="GridView1_RowDeleted" onrowupdated="GridView1_RowUpdated">
+        AutoGenerateColumns="False" ondatabound="GridView1_DataBound" DataKeyNames="IDProduit" 
+        onrowcommand="GridView1_RowCommand">
+        <EmptyDataTemplate>
+            Votre panier est vide
+        </EmptyDataTemplate>
         <Columns>
             <asp:TemplateField ShowHeader="False">
                 <EditItemTemplate>
                     <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="True" 
-                        CommandName="Update" Text="Update"></asp:LinkButton>
+                        CommandName="Update" Text="Modifier"></asp:LinkButton>
                     &nbsp;<asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" 
-                        CommandName="Cancel" Text="Cancel"></asp:LinkButton>
+                        CommandName="Cancel" Text="Annuler"></asp:LinkButton>
                         <asp:HiddenField ID="HF_ID_produit" runat="server" Value='<%# Bind("IDProduit") %>'></asp:HiddenField>
                 </EditItemTemplate>
                 <ItemTemplate>
                     <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" 
-                        CommandName="Edit" Text="Edit"></asp:LinkButton>
+                        CommandName="Edit" Text="Editer"></asp:LinkButton>
                     &nbsp;<asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" 
-                        CommandName="Delete" Text="Delete"></asp:LinkButton>
+                        CommandName="Delete" Text="Supprimer"></asp:LinkButton>
                         <asp:HiddenField ID="HF_ID_produit" runat="server" Value='<%# Bind("IDProduit") %>'></asp:HiddenField>
                 </ItemTemplate>
             </asp:TemplateField>
@@ -54,6 +58,9 @@
                 <ItemTemplate>
                     <asp:Label ID="Label4" runat="server" Text='<%# Bind("Qte") %>'></asp:Label>
                 </ItemTemplate>
+                <FooterTemplate>
+                            <b>Total:</b>
+                </FooterTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Sous-total">
                 <ItemTemplate>
